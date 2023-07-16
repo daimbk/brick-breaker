@@ -11,6 +11,7 @@ dt = 0
 TEAL = (0, 128, 128)
 ORANGE = (255, 165, 0)
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 # set up the player
 player_color = TEAL
@@ -19,6 +20,12 @@ player_height = 10
 player_x = (width - player_width) // 2
 player_y = screen.get_height() / 1.2
 player_speed = 2
+
+# set up ball
+ball_color = WHITE
+ball_radius = 5
+ball_x = width // 2
+ball_y = player_y - ball_radius
 
 # set up bricks
 brick_color = ORANGE
@@ -48,6 +55,9 @@ while running:
     # draw player (paddle)
     pygame.draw.rect(screen, TEAL, (player_x, player_y,
                      player_width, player_height))
+
+    # draw ball
+    pygame.draw.circle(screen, ball_color, (ball_x, ball_y), ball_radius)
 
     # draw bricks
     for brick in bricks:
