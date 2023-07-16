@@ -105,6 +105,8 @@ while running:
         if ball.colliderect(brick):
             bricks.remove(brick) # destroy brick
             ball_dy *= -1
+             # change brick colors on hit (select random rgb values using randint)
+            brick_color = (randint(0, 255), randint(0, 255), randint(0, 255))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
