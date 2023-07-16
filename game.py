@@ -1,5 +1,5 @@
 import pygame
-from random import choice
+from random import choice, randint
 
 # pygame setup
 pygame.init()
@@ -9,6 +9,10 @@ pygame.display.set_caption("Brick Breaker")
 clock = pygame.time.Clock()
 running = True
 dt = 0
+
+# load font for win/lose message display
+pygame.font.init()
+font = pygame.font.SysFont(None, 50)
 
 # colors
 TEAL = (0, 128, 128)
@@ -82,6 +86,25 @@ while running:
     # <----- move ball ----->
     ball_x += ball_dx * ball_speed
     ball_y += ball_dy * ball_speed
+
+    # update ball rect with new coordinates
+    ball = pygame.Rect(ball_x - ball_radius, ball_y - ball_radius, ball_radius * 2, ball_radius * 2)
+
+    # collision detection with walls
+    if ball_x <= ball_radius or ball_x >= width - ball_radius:
+        ball_dx *= -1
+    if ball_y <= ball_radius:
+        ball_dy *= -1
+
+    # collision detection with player
+    if ball.colliderect(pygame.Rect(player_x, player_y, player_width, player_height)):
+        ball_dy *= -1
+
+    # collision detection with bricks
+    for brick in bricks:
+        if ball.colliderect(brick):
+            bricks.remove(brick) # destroy brick
+            ball_dy *= -1
 
     # flip() the display to put your work on screen
     pygame.display.flip()
