@@ -1,17 +1,22 @@
 import pygame
+from random import choice
 
 # pygame setup
 pygame.init()
 width, height = 1280, 720
 screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Brick Breaker")
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
+# colors
 TEAL = (0, 128, 128)
 ORANGE = (255, 165, 0)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 128, 0)
 
 # set up the player
 player_color = TEAL
@@ -26,6 +31,9 @@ ball_color = WHITE
 ball_radius = 5
 ball_x = width // 2
 ball_y = player_y - ball_radius
+ball_dx = choice([-2, 2])
+ball_dy = -2
+ball_speed = 2
 
 # set up bricks
 brick_color = ORANGE
@@ -54,7 +62,7 @@ while running:
 
     # draw player (paddle)
     pygame.draw.rect(screen, TEAL, (player_x, player_y,
-                     player_width, player_height))
+                    player_width, player_height))
 
     # draw ball
     pygame.draw.circle(screen, ball_color, (ball_x, ball_y), ball_radius)
@@ -70,6 +78,10 @@ while running:
         player_x -= 300 * dt * player_speed
     if keys[pygame.K_RIGHT]:
         player_x += 300 * dt * player_speed
+
+    # <----- move ball ----->
+    ball_x += ball_dx * ball_speed
+    ball_y += ball_dy * ball_speed
 
     # flip() the display to put your work on screen
     pygame.display.flip()
