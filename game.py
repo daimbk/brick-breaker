@@ -13,6 +13,19 @@ dt = 0
 # load font for win/lose message display
 pygame.font.init()
 font = pygame.font.SysFont(None, 50)
+score_font = pygame.font.SysFont(None, 20)
+
+# score setup, get high_score from file
+score = 0
+
+try:
+    score_file = open("high_score.txt", "r")
+    high_score_data = score_file.read().split(",")
+    name = high_score_data[0]
+    high_score = high_score_data[1]
+
+except:
+    high_score = 0 # if no previous score
 
 # colors
 TEAL = (0, 128, 128)
@@ -79,6 +92,13 @@ while running:
             pygame.draw.rect(screen, brick_color, brick)
             pygame.draw.rect(screen, BLACK, brick, 1)  # brick outlines for padding
 
+        # display score
+        high_score_text = score_font.render(f"HIGH SCORE: {high_score}", True, WHITE)
+        screen.blit(high_score_text, (10, height - high_score_text.get_height() - 50))
+
+        score_text = score_font.render(f"SCORE: {score}", True, WHITE)
+        screen.blit(score_text, (10, height - high_score_text.get_height() - 30))
+
         # move player
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
@@ -110,6 +130,7 @@ while running:
                 ball_dy *= -1
                 # change brick colors on hit (select random rgb values using randint)
                 brick_color = (randint(0, 255), randint(0, 255), randint(0, 255))
+                score += 1
 
         # game over condition
         if ball_y > height:
@@ -127,7 +148,7 @@ while running:
     # win screen
     if win:
         win_text = font.render("WIN", True, GREEN)
-        screen.blit(game_over_text, ((width - game_over_text.get_width()) // 2, height // 2))
+        screen.blit(win_text, ((width - game_over_text.get_width()) // 2, height // 2))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
