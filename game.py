@@ -20,10 +20,8 @@ score = 0
 
 try:
     score_file = open("high_score.txt", "r")
-    high_score_data = score_file.read().split(",")
-    name = high_score_data[0]
-    high_score = high_score_data[1]
-
+    high_score = int(score_file.read().strip("\n"))
+    score_file.close()
 except:
     high_score = 0 # if no previous score
 
@@ -139,6 +137,13 @@ while running:
         # win condition
         if len(bricks) == 0:
             win = True
+
+    # save high score to file
+    if win or game_over:
+        if score > high_score:
+            score_file = open("high_score.txt", "w")
+            score_file.write(str(score))
+            score_file.close()
 
     # game over screen
     if game_over:
