@@ -5,7 +5,9 @@
     "python.formatting.provider": "none",
     "cSpell.words": [
         "blit",
+        "collidepoint",
         "colliderect",
+        "MOUSEBUTTONDOWN",
         "pygame"
     ]
 }

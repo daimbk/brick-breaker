@@ -65,6 +65,51 @@ for row in range(brick_rows):
         brick_y = row * (brick_height + padding) + 50
         bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
 
+# play again / quit buttons
+def end_game_screen():
+    # create PLAY AGAIN and QUIT buttons
+    play_again_text = font.render("PLAY AGAIN", True, WHITE)
+    quit_text = font.render("QUIT", True, WHITE)
+
+    # get coordinates to display in same line
+    button_padding = 35  # space between buttons
+    total_button_width = play_again_text.get_width() + quit_text.get_width() + button_padding
+    button_start_x = (width - total_button_width) // 2
+    play_again_rect = play_again_text.get_rect(left = button_start_x, top = height // 2 + 50)
+    quit_rect = quit_text.get_rect(left = button_start_x + play_again_text.get_width() + button_padding, top = height // 2 + 50)
+
+    screen.blit(play_again_text, play_again_rect)
+    screen.blit(quit_text, quit_rect)
+
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    # play again logic
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if play_again_rect.collidepoint(mouse_x, mouse_y):
+            # reset game
+            global game_over, score, player_x, player_y, ball_x, ball_y, ball_dx, ball_dy, bricks, running
+            game_over = False
+            score = 0
+
+            player_x = (width - player_width) // 2
+            player_y = screen.get_height() / 1.2
+
+            ball_x = width // 2
+            ball_y = player_y - ball_radius
+            ball_dx = choice([-2, 2])
+            ball_dy = -2
+
+            bricks.clear()
+            for row in range(brick_rows):
+                for col in range(brick_cols):
+                    brick_x = col * (brick_width + padding) + 10
+                    brick_y = row * (brick_height + padding) + 50
+                    bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
+
+    # quit logic
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if quit_rect.collidepoint(mouse_x, mouse_y):
+            running = False
+
 game_over = False
 win = False
 # game loop
@@ -79,8 +124,7 @@ while running:
 
     if not game_over:
         # draw player (paddle)
-        pygame.draw.rect(screen, TEAL, (player_x, player_y,
-                        player_width, player_height))
+        pygame.draw.rect(screen, TEAL, (player_x, player_y, player_width, player_height))
 
         # draw ball
         pygame.draw.circle(screen, ball_color, (ball_x, ball_y), ball_radius)
@@ -149,11 +193,13 @@ while running:
     if game_over:
         game_over_text = font.render("GAME OVER", True, RED)
         screen.blit(game_over_text, ((width - game_over_text.get_width()) // 2, height // 2))
+        end_game_screen()
 
     # win screen
     if win:
         win_text = font.render("WIN", True, GREEN)
         screen.blit(win_text, ((width - game_over_text.get_width()) // 2, height // 2))
+        end_game_screen()
 
     # flip() the display to put your work on screen
     pygame.display.flip()
