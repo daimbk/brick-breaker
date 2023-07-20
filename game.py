@@ -66,7 +66,8 @@ for row in range(brick_rows):
         bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
 
 # play again / quit buttons
-def end_game_screen():
+def end_game_screen(end_game_type):
+    # pass the condition on which game ended (win or game_over)
     # create PLAY AGAIN and QUIT buttons
     play_again_text = font.render("PLAY AGAIN", True, WHITE)
     quit_text = font.render("QUIT", True, WHITE)
@@ -86,8 +87,15 @@ def end_game_screen():
     if event.type == pygame.MOUSEBUTTONDOWN:
         if play_again_rect.collidepoint(mouse_x, mouse_y):
             # reset game
-            global game_over, score, player_x, player_y, ball_x, ball_y, ball_dx, ball_dy, bricks, running
-            game_over = False
+            global score, player_x, player_y, ball_x, ball_y, ball_dx, ball_dy, bricks, running
+            if end_game_type == "win":
+                global win
+                win = False
+
+            if end_game_type == "game_over":
+                global game_over
+                game_over = False
+
             score = 0
 
             player_x = (width - player_width) // 2
@@ -122,7 +130,7 @@ while running:
     # fill the screen with a color to wipe away anything from last frame
     screen.fill(BLACK)
 
-    if not game_over:
+    if not (game_over or win):
         # draw player (paddle)
         pygame.draw.rect(screen, TEAL, (player_x, player_y, player_width, player_height))
 
@@ -193,13 +201,13 @@ while running:
     if game_over:
         game_over_text = font.render("GAME OVER", True, RED)
         screen.blit(game_over_text, ((width - game_over_text.get_width()) // 2, height // 2))
-        end_game_screen()
+        end_game_screen("game_over")
 
     # win screen
     if win:
         win_text = font.render("WIN", True, GREEN)
-        screen.blit(win_text, ((width - game_over_text.get_width()) // 2, height // 2))
-        end_game_screen()
+        screen.blit(win_text, ((width - win_text.get_width()) // 2, height // 2))
+        end_game_screen("win")
 
     # flip() the display to put your work on screen
     pygame.display.flip()
