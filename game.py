@@ -4,7 +4,7 @@ from random import choice, randint
 # pygame setup
 pygame.init()
 width, height = 1280, 720
-screen = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)  # Set the RESIZABLE flag
 pygame.display.set_caption("Brick Breaker")
 clock = pygame.time.Clock()
 running = True
@@ -59,12 +59,6 @@ brick_cols = width // (brick_width + 5)
 padding = 5
 bricks = []  # contains the undestroyed bricks
 
-for row in range(brick_rows):
-    for col in range(brick_cols):
-        brick_x = col * (brick_width + padding) + 10
-        brick_y = row * (brick_height + padding) + 50
-        bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
-
 # play again / quit buttons
 def end_game_screen(end_game_type):
     # pass the condition on which game ended (win or game_over)
@@ -118,14 +112,26 @@ def end_game_screen(end_game_type):
         if quit_rect.collidepoint(mouse_x, mouse_y):
             running = False
 
+
 game_over = False
 win = False
+
+for row in range(brick_rows):
+    for col in range(brick_cols):
+        brick_x = col * (brick_width + padding) + 10
+        brick_y = row * (brick_height + padding) + 50
+        bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
+
 # game loop
 while running:
+
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.VIDEORESIZE:  # Handle resize event
+            width, height = event.w, event.h
+            screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill(BLACK)
