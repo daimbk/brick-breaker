@@ -1,10 +1,10 @@
 import pygame
-from random import choice, randint
+from random import randint, choice
 
 # pygame setup
 pygame.init()
 width, height = 1280, 720
-screen = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)  # Set the RESIZABLE flag
 pygame.display.set_caption("Brick Breaker")
 clock = pygame.time.Clock()
 running = True
@@ -12,7 +12,7 @@ dt = 0
 
 # load font for win/lose message display
 pygame.font.init()
-font = pygame.font.SysFont(None, 50)
+font = pygame.font.SysFont(None, 50, bold=True)
 score_font = pygame.font.SysFont(None, 20)
 
 # score setup, get high_score from file
@@ -32,6 +32,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 128, 0)
+PINK = (255, 105, 180)
 
 # set up the player
 player_color = TEAL
@@ -59,11 +60,6 @@ brick_cols = width // (brick_width + 5)
 padding = 5
 bricks = []  # contains the undestroyed bricks
 
-for row in range(brick_rows):
-    for col in range(brick_cols):
-        brick_x = col * (brick_width + padding) + 10
-        brick_y = row * (brick_height + padding) + 50
-        bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
 
 # play again / quit buttons
 def end_game_screen(end_game_type):
@@ -118,14 +114,67 @@ def end_game_screen(end_game_type):
         if quit_rect.collidepoint(mouse_x, mouse_y):
             running = False
 
+def welcome_screen():
+    background = pygame.image.load("bg.png")
+    #Draw the background
+    screen.blit(background, (0, 0))
+    
+    # Draw play and quit buttons
+    play_button_text = font.render("PLAY", True, WHITE)
+    quit_button_text = font.render("QUIT", True, WHITE)
+
+    button_padding = 35  # space between buttons
+    total_button_width = play_button_text.get_width() + quit_button_text.get_width() + button_padding
+    button_start_x = (width - total_button_width) // 2
+
+    # Adjust the vertical position for both buttons
+    vertical_offset = 100
+    button_top_position = height // 2 + vertical_offset
+
+    play_button_rect = play_button_text.get_rect(left=button_start_x, top=button_top_position)
+    quit_button_rect = quit_button_text.get_rect(left=button_start_x + play_button_text.get_width() + button_padding,
+                                                top=button_top_position)
+    
+    screen.blit(play_button_text, play_button_rect)
+    screen.blit(quit_button_text, quit_button_rect)
+
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if play_button_rect.collidepoint(mouse_x, mouse_y):
+                    return
+                if quit_button_rect.collidepoint(mouse_x, mouse_y):
+                    pygame.quit()
+                    quit()
+
+
 game_over = False
 win = False
+welcome_screen()
+
+for row in range(brick_rows):
+    for col in range(brick_cols):
+        brick_x = col * (brick_width + padding) + 10
+        brick_y = row * (brick_height + padding) + 50
+        bricks.append(pygame.Rect(brick_x, brick_y, brick_width, brick_height))
+
 # game loop
 while running:
+
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.VIDEORESIZE:  # Handle resize event
+            width, height = event.w, event.h
+            screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 
     # fill the screen with a color to wipe away anything from last frame
     screen.fill(BLACK)
