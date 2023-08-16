@@ -4,7 +4,7 @@ import random
 
 # pygame setup
 pygame.init()
-width, height = 1280, 680
+width, height = 1280, 720
 screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)  # Set the RESIZABLE flag
 pygame.display.set_caption("Brick Breaker")
 clock = pygame.time.Clock()
@@ -13,7 +13,7 @@ dt = 0
 
 # load font for win/lose message display
 pygame.font.init()
-font = pygame.font.SysFont(None, 50)
+font = pygame.font.SysFont(None, 50, bold=True)
 score_font = pygame.font.SysFont(None, 20)
 
 # score setup, get high_score from file
@@ -34,7 +34,6 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 128, 0)
 PINK = (255, 105, 180)
-font = pygame.font.SysFont(None, 50, bold=True)
 
 # set up the player
 player_color = TEAL
@@ -61,15 +60,7 @@ brick_rows = 5
 brick_cols = width // (brick_width + 5)
 padding = 5
 bricks = []  # contains the undestroyed bricks
-welcome_bricks = []
 
-for row in range(brick_rows):
-    for col in range(brick_cols):
-        brick_x = col * (brick_width + padding) + 10
-        brick_y = row * (brick_height + padding) + 50
-        # Generate random RGB values for the brick color
-        brick_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-        welcome_bricks.append((pygame.Rect(brick_x, brick_y, brick_width, brick_height), brick_color))
 
 # play again / quit buttons
 def end_game_screen(end_game_type):
@@ -125,13 +116,10 @@ def end_game_screen(end_game_type):
             running = False
 
 def welcome_screen():
-    screen.fill(BLACK)
-    # Draw bricks for the welcome screen
-    for brick, color in welcome_bricks:
-        pygame.draw.rect(screen, color, brick)
-        pygame.draw.rect(screen, BLACK, brick, 1)  # Brick outlines for padding
+    background = pygame.image.load("bg.png")
+    #Draw the background
+    screen.blit(background, (0, 0))
     
-    brick_breaker = font.render("BRICK BREAKER!", True, PINK)
     # Draw play and quit buttons
     play_button_text = font.render("PLAY", True, WHITE)
     quit_button_text = font.render("QUIT", True, WHITE)
@@ -140,12 +128,14 @@ def welcome_screen():
     total_button_width = play_button_text.get_width() + quit_button_text.get_width() + button_padding
     button_start_x = (width - total_button_width) // 2
 
-    text_rect = brick_breaker.get_rect(center=(width // 2, height // 2))
-    play_button_rect = play_button_text.get_rect(left=button_start_x, top=height // 2 + 50)
-    quit_button_rect = quit_button_text.get_rect(left=button_start_x + play_button_text.get_width() + button_padding,
-                                                 top=height // 2 + 50)
+    # Adjust the vertical position for both buttons
+    vertical_offset = 100
+    button_top_position = height // 2 + vertical_offset
 
-    screen.blit(brick_breaker, text_rect)
+    play_button_rect = play_button_text.get_rect(left=button_start_x, top=button_top_position)
+    quit_button_rect = quit_button_text.get_rect(left=button_start_x + play_button_text.get_width() + button_padding,
+                                                top=button_top_position)
+    
     screen.blit(play_button_text, play_button_rect)
     screen.blit(quit_button_text, quit_button_rect)
 
